@@ -20,7 +20,7 @@ TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 CPU_THRESHOLD = float(os.getenv("CPU_THRESHOLD", 90.0))
 
-# Docker Client Setup
+# Dockerr Client Setup
 try:
     client = docker.from_env()
     logger.info("Successfully connected to Docker socket.")
