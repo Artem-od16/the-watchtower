@@ -10,7 +10,7 @@ from prometheus_client import start_http_server, Counter, Gauge
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Prometheus Metrics
+# Prometheus Metrics!
 CHECKS_TOTAL = Counter('monitor_loop_iterations_total', 'Total number of monitoring loops')
 PROMETHEUS_CPU_USAGE = Gauge('monitor_custom_cpu_usage', 'CPU usage measured by monitor.py')
 CONTAINER_STATUS = Gauge('monitor_container_status', 'Status of docker containers', ['container_name'])
