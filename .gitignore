@@ -1,0 +1,13 @@
+# Секретные ключи
+keys/
+*.pem
+
+# Terraform файлы
+terraform/.terraform/
+terraform/*.tfstate*
+terraform/.terraform.lock.hcl
+
+# Python файлы
+__pycache__/
+*.pyc
+.env

@@ -1,0 +1,39 @@
+name: Final Watchtower
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  manage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Force Sync and Restart
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Если папки нет - клонируем, если есть - идем дальше
+            if [ ! -d "~/the-watchtower" ]; then
+              git clone https://github.com/Artem-od16/the-watchtower.git ~/the-watchtower
+            fi
+            
+            cd ~/the-watchtower || exit
+            
+            # Синхронизация кода
+            git fetch origin main
+            git reset --hard origin/main
+            
+            # Полная очистка висящих контейнеров, чтобы не было Conflict
+            docker-compose down --remove-orphans || true
+            docker rm -f node-exporter grafana prometheus python-monitor || true
+            
+            # Запуск с передачей секретов
+            export TELEGRAM_TOKEN="${{ secrets.TELEGRAM_TOKEN }}"
+            export TELEGRAM_CHAT_ID="${{ secrets.TELEGRAM_CHAT_ID }}"
+            
+            docker-compose up -d --build
