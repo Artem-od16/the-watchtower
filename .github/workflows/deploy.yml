@@ -15,25 +15,26 @@ jobs:
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
-            # Если папки нет - клонируем, если есть - идем дальше
+            # Check if directory exists, clone if missing
             if [ ! -d "~/the-watchtower" ]; then
               git clone https://github.com/Artem-od16/the-watchtower.git ~/the-watchtower
             fi
             
             cd ~/the-watchtower || exit
             
-            # Синхронизация кода
+            # Sync local repository with remote main branch
             git fetch origin main
             git reset --hard origin/main
             
-            # Полная очистка висящих контейнеров, чтобы не было Conflict
-            docker-compose down --remove-orphans || true
+            # Stop existing containers and cleanup orphans
+            docker compose down --remove-orphans || true
             docker rm -f node-exporter grafana prometheus python-monitor || true
             
-            # Запуск с передачей секретов
+            # Inject environment variables for notifications
             export TELEGRAM_TOKEN="${{ secrets.TELEGRAM_TOKEN }}"
             export TELEGRAM_CHAT_ID="${{ secrets.TELEGRAM_CHAT_ID }}"
             
-            docker-compose up -d --build
+            # Deploy updated stack
+            docker compose up -d --build
