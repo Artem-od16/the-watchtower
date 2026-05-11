@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "eu-west-3"
+  region = "eu-north-1"
 }
 
 resource "aws_key_pair" "watchtower_key" {
@@ -64,7 +64,7 @@ resource "aws_security_group" "watchtower_sg" {
 }
 
 resource "aws_instance" "watchtower_server" {
-  ami           = "ami-078abd88811000d7e" # Current Ubuntu 22.04 AMI
+  ami           = "ami-0014ce3e52359afbd" # Current Ubuntu 22.04 AMI
   instance_type = "t3.micro"               # Instance size
   key_name      = aws_key_pair.watchtower_key.key_name
 

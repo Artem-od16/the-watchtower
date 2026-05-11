@@ -7,10 +7,10 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - /var/lib/docker/volumes/the-watchtower_grafana-storage/_data:/var/lib/grafana
+      - grafana-storage:/var/lib/grafana
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
-      - GF_SERVER_ROOT_URL=http://13.39.80.104:3000
+      - GF_SERVER_ROOT_URL=http://51.20.123.214:3000
     networks:
       - monitor-network
     restart: always
@@ -57,6 +57,7 @@ services:
         max-file: "3"
 
   python-monitor:
+    build: .
     image: the-watchtower-python-monitor
     container_name: python-monitor
     environment:
@@ -73,6 +74,22 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/var/data
+    networks:
+      - monitor-network
+
 networks:
   monitor-network:
     driver: bridge
+
+volumes:
+  grafana-storage:
+  portainer_data:
