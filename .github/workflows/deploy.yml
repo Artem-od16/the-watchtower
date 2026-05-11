@@ -15,7 +15,6 @@ jobs:
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
-          # Changed to match your exact secret name: SSH_PRIVATE_KEY
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             # Check if directory exists, clone if missing
@@ -29,13 +28,11 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
             
-            # Stop existing containers and cleanup orphans
+            # Stop existing stack and force remove conflicting containers
             docker compose down --remove-orphans || true
-            docker rm -f node-exporter grafana prometheus python-monitor || true
+            docker rm -f node-exporter grafana prometheus python-monitor portainer || true
             
-            # Inject environment variables for notifications
-            export TELEGRAM_TOKEN="${{ secrets.TELEGRAM_TOKEN }}"
-            export TELEGRAM_CHAT_ID="${{ secrets.TELEGRAM_CHAT_ID }}"
-            
-            # Deploy updated stack
+            # Deploy updated stack with environment variables
+            TELEGRAM_TOKEN="${{ secrets.TELEGRAM_TOKEN }}" \
+            TELEGRAM_CHAT_ID="${{ secrets.TELEGRAM_CHAT_ID }}" \
             docker compose up -d --build
