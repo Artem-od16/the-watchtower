@@ -15,7 +15,8 @@ jobs:
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SSH_KEY }}
+          # Changed to match your exact secret name: SSH_PRIVATE_KEY
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             # Check if directory exists, clone if missing
             if [ ! -d "~/the-watchtower" ]; then
